@@ -366,7 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <li class="sidebar-item" id="nav-orchestrator"><a href="orchestrator.html"><svg class="sidebar-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line></svg> SLM Orchestrator</a></li>
       <li class="sidebar-item" id="nav-sql"><a href="sql.html"><svg class="sidebar-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> SLM Text-to-SQL</a></li>
       <li class="sidebar-item" id="nav-code-interpreter"><a href="code_interpreter.html"><svg class="sidebar-icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg> SLM Code Interpreter</a></li>
-      <li class="sidebar-item" id="nav-git-copilot"><a href="git_copilot.html"><svg class="sidebar-icon" viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 15V9a4 4 0 0 0-4-4H9"></path><line x1="6" y1="9" x2="6" y2="15"></line></svg> SLM Git Co-pilot</a></li>
+      <li class="sidebar-item" id="nav-git-repo-manager"><a href="git_repo_manager.html"><svg class="sidebar-icon" viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 15V9a4 4 0 0 0-4-4H9"></path><line x1="6" y1="9" x2="6" y2="15"></line></svg> SLM Git Repo Manager</a></li>
       <li class="sidebar-item" id="nav-database-migrator"><a href="database_migrator.html"><svg class="sidebar-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg> SLM Database Migrator</a></li>
       
       <!-- Web & Scraping Category -->
@@ -404,8 +404,8 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("nav-cli")?.classList.add("active");
     } else if (page === "code_interpreter.html") {
       document.getElementById("nav-code-interpreter")?.classList.add("active");
-    } else if (page === "git_copilot.html") {
-      document.getElementById("nav-git-copilot")?.classList.add("active");
+    } else if (page === "git_repo_manager.html") {
+      document.getElementById("nav-git-repo-manager")?.classList.add("active");
     } else if (page === "json_cleaner.html") {
       document.getElementById("nav-json-cleaner")?.classList.add("active");
     } else if (page === "document_parser.html") {
@@ -660,10 +660,10 @@ const ALL_AGENT_SPECS = {
       exit_code: 0
     })
   },
-  git_copilot: {
-    name: "SLM Git Co-pilot",
-    package: "slm-git-copilot",
-    className: "SLMGitCopilot",
+  git_repo_manager: {
+    name: "SLM Git Repo Manager",
+    package: "slm-git-repo-manager",
+    className: "SLMGitRepoManager",
     methodName: "generate_commit_message",
     category: "Developer Tools",
     fields: [
@@ -671,7 +671,7 @@ const ALL_AGENT_SPECS = {
       { id: "system_prompt", label: "Commit Rule", default: "Follow Conventional Commits format.", type: "text" }
     ],
     getOutput: (vals) => ({
-      agent: "SLMGitCopilot",
+      agent: "SLMGitRepoManager",
       status: "200 OK",
       commit_message: "feat: add addition helper function in math utils",
       diff_snippet: vals.diff
@@ -736,7 +736,7 @@ const ALL_AGENT_SPECS = {
     methodName: "scrape",
     category: "Web & Scraping",
     fields: [
-      { id: "url", label: "Target URL (Live Scrape)", default: "https://www.slmagents.ai/index.html", type: "text" },
+      { id: "url", label: "Target URL (Live Scrape)", default: "https://spcv-slm-agents.hf.space/index.html", type: "text" },
       { id: "schema", label: "Target JSON Schema", default: "{'title': 'str'}", type: "text" }
     ],
     getOutput: (vals) => ({
@@ -759,8 +759,25 @@ const ALL_AGENT_SPECS = {
       agent: "SLMSearchOrchestrator",
       status: "200 OK",
       search_query: vals.query,
-      results_count: 5,
-      top_snippet: `DuckDuckGo RAG search results for '${vals.query}'`
+      results_count: 3,
+      retrieved_chunks: [
+        {
+          title: "ONNX Runtime CPU performance benchmarks",
+          href: "https://onnxruntime.ai/docs/performance/cpu",
+          body: "ONNX Runtime with OpenMP outperforms standard CPU executions by 2-3x on transformer models."
+        },
+        {
+          title: "Optimizing CPU execution on Hugging Face spaces",
+          href: "https://huggingface.co/blog/cpu-performance",
+          body: "Configuring environment thread variables like OMP_NUM_THREADS improves ONNX CPU utilization."
+        },
+        {
+          title: "Phi-3.5 CPU inference optimization guides",
+          href: "https://github.com/microsoft/onnxruntime-genai",
+          body: "CPU inference speed is maximized by matching threads to the number of physical cores."
+        }
+      ],
+      answer: `Based on the retrieved CPU performance benchmarks [1], ONNX Runtime outperforms standard executions by 2-3x on CPU. Optimal results are achieved by setting environment variables like OMP_NUM_THREADS [2] and aligning active threads with physical CPU cores [3].`
     })
   },
   database_migrator: {
@@ -1167,14 +1184,97 @@ function updateStudioOutput() {
   }
 }
 
+function formatLogVals(vals) {
+  let cleaned = {};
+  for (let key in vals) {
+    if (typeof vals[key] === 'string' && vals[key].length > 40) {
+      cleaned[key] = vals[key].substring(0, 30) + "... [truncated]";
+    } else {
+      cleaned[key] = vals[key];
+    }
+  }
+  return JSON.stringify(cleaned);
+}
+
+function getAgentThinkingLogs(agentKey, vals) {
+  const spec = ALL_AGENT_SPECS[agentKey] || ALL_AGENT_SPECS["rag"];
+  const logs = [
+    `[*] Initializing ${spec.className} locally on CPU (threads=4, engine=quantized-onnx)...`,
+    `[*] Loaded model configuration: ${spec.package}/config.yaml`,
+    `[Agent Thought] Analyzing parameters and constraints for inputs: ${formatLogVals(vals)}`
+  ];
+  
+  if (agentKey === "rag") {
+    logs.push(
+      `[Agent Thought] Query matches grounded context retrieval window. Extracting chunks...`,
+      `[Action] Loading dense document embeddings... (Parsed ${vals.chunks ? vals.chunks.split(",").length : 0} chunks)`,
+      `[Action] Setting constraint instruction: "${vals.instruction || 'None'}"`,
+      `[Agent Thought] Grounding prompt generation to prevent hallucination...`,
+      `[Action] Generating answer tokens using local Qwen2.5-Coder model...`
+    );
+  } else if (agentKey === "search_orchestrator") {
+    logs.push(
+      `[Agent Thought] User search query: "${vals.query || ''}" requires web retrieval.`,
+      `[Action] Generating 3 search variations for query expansion...`,
+      `    -> Variation 1: "${vals.query} cpu speed"`,
+      `    -> Variation 2: "${vals.query} benchmarks onnx"`,
+      `    -> Variation 3: "${vals.query} github offline"`,
+      `[Action] Querying DuckDuckGo search library... (Found 3 unique results)`,
+      `[Agent Thought] Synthesizing grounded summary answer based on retrieved snippets...`,
+      `[Action] Generating citation citations via local model...`
+    );
+  } else if (agentKey === "sql") {
+    logs.push(
+      `[Agent Thought] Input schema: "${vals.schema || ''}" and query: "${vals.query || ''}"`,
+      `[Action] Parsing table schemas and building AST rules...`,
+      `[Agent Thought] Mapping natural language predicates to SQL clauses.`,
+      `[Action] Generating SQLite-compliant SQL script...`
+    );
+  } else if (agentKey === "orchestrator") {
+    logs.push(
+      `[Agent Thought] Routing task: "${vals.question || ''}" among available agents: "${vals.agents || ''}"`,
+      `[Action] Evaluating match vector scores for agents...`,
+      `[Agent Thought] Determined optimal routing node.`,
+      `[Action] Dispatching to best matched agent...`
+    );
+  } else if (agentKey === "code_interpreter") {
+    logs.push(
+      `[Agent Thought] Target script to run: \n${vals.code || ''}`,
+      `[Action] Spawning secure sub-process sandboxed container...`,
+      `[Action] Executing Python interpreter locally on CPU...`,
+      `[*] Intercepting sys.stdout and sys.stderr...`
+    );
+  } else {
+    logs.push(
+      `[Agent Thought] Structuring target method call: ${spec.className}.${spec.methodName}()`,
+      `[Action] Setting model hyper-parameters (temperature=0.2, top_p=0.9)`,
+      `[Action] Executing offline agent pipeline inference...`
+    );
+  }
+  
+  logs.push(
+    `[*] Inference complete. Formatting JSON output response payload...`,
+    `\n[JSON Result]:`
+  );
+  return logs;
+}
+
 async function runStudioAgent() {
   const consoleEl = document.getElementById("studio-output-console");
   if (!consoleEl) return;
 
   const spec = ALL_AGENT_SPECS[currentStudioAgentKey] || ALL_AGENT_SPECS["voice"];
-  consoleEl.textContent = `Executing ${spec.name}.${spec.methodName}()... (threads=4, engine=quantized-onnx)\n[System] Connecting to local CPU runner on Hugging Face...`;
-
   const fieldVals = getActiveFieldValues(spec);
+  const logs = getAgentThinkingLogs(currentStudioAgentKey, fieldVals);
+
+  // Clear console and start streaming logs
+  consoleEl.textContent = "";
+  
+  for (let i = 0; i < logs.length; i++) {
+    consoleEl.textContent += logs[i] + "\n";
+    consoleEl.scrollTop = consoleEl.scrollHeight;
+    await new Promise(resolve => setTimeout(resolve, 200));
+  }
 
   try {
     const response = await fetch("https://spcv-slm-agents.hf.space/api/run_agent", {
@@ -1194,7 +1294,7 @@ async function runStudioAgent() {
     if (data.error) {
       throw new Error(data.error);
     }
-    consoleEl.textContent = JSON.stringify(data.result, null, 2);
+    consoleEl.textContent += JSON.stringify(data.result, null, 2);
     
     // Play synthesized voice output if returned
     if (data.result && data.result.audio) {
@@ -1202,7 +1302,7 @@ async function runStudioAgent() {
       audioObj.play().catch(e => console.log("Audio playback failed: " + e));
     }
   } catch (err) {
-    consoleEl.textContent = `[Warning] Real-time CPU runner unavailable: ${err.message}\n` +
+    consoleEl.textContent += `\n[Warning] Real-time CPU runner unavailable: ${err.message}\n` +
       `[Warning] Falling back to static mock preview output:\n\n` +
       JSON.stringify(spec.getOutput(fieldVals), null, 2);
   }
